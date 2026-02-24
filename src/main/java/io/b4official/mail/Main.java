@@ -1,0 +1,7 @@
+package io.b4official.mail;
+
+public class Main {
+    static void main() {
+        IO.println("Hello and welcome!");
+    }
+}
