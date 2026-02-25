@@ -1,18 +1,10 @@
 package io.b4official.mail.repository;
 
 import io.b4official.mail.domain.User;
-
 import java.util.List;
 
-public class UserRepository implements IUserRepository {
+public interface UserRepository {
 
-    @Override
-    public void addUser() {
-
-    }
-
-    @Override
-    public List<User> getUsers() {
-        return List.of();
-    }
+    void addUser();
+    List<User> getUsers();
 }

@@ -1,20 +1,10 @@
 package io.b4official.mail.repository;
 
 import io.b4official.mail.domain.Email;
-
 import java.util.List;
 
-public class EmailRepository implements IEmailRepository{
+public interface EmailRepository {
 
-
-    @Override
-    public void addEmail() {
-
-    }
-
-    @Override
-    public List<Email> getEmails() {
-
-        return null;
-    }
+    void addEmail();
+    List<Email> getEmails();
 }
