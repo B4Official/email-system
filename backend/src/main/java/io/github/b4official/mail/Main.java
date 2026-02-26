@@ -1,4 +1,4 @@
-package io.b4official.mail;
+package io.github.b4official.mail;
 
 public class Main {
     static void main() {

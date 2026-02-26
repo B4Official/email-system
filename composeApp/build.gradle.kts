@@ -38,7 +38,7 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "io.b4official.mail"
+            packageName = "io.github.b4official.mail"
             packageVersion = "1.0.0"
         }
     }

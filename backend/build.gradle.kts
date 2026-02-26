@@ -1,9 +1,14 @@
 plugins {
     id("java")
+    id("application")
 }
 
 group = "io.b4official"
 version = "1.0-SNAPSHOT"
+
+application {
+    mainClass = "io.github.b4official.mail.Main"
+}
 
 repositories {
     mavenCentral()

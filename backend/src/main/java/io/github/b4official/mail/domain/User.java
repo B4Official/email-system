@@ -1,4 +1,4 @@
-package io.b4official.mail.domain;
+package io.github.b4official.mail.domain;
 
 public class User {
 

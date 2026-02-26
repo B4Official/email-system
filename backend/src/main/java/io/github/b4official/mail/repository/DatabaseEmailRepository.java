@@ -1,6 +1,6 @@
-package io.b4official.mail.repository;
+package io.github.b4official.mail.repository;
 
-import io.b4official.mail.domain.User;
+import io.github.b4official.mail.domain.User;
 
 import java.util.List;
 
