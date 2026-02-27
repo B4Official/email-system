@@ -16,8 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.resources.painterResource
 
-import email_system.composeapp.generated.resources.Res
-import email_system.composeapp.generated.resources.compose_multiplatform
+import email_system.frontend.generated.resources.Res
+import email_system.frontend.generated.resources.compose_multiplatform
 
 @Composable
 @Preview

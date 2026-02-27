@@ -8,7 +8,12 @@ plugins {
 }
 
 kotlin {
-    jvm()
+    jvm("desktop")
+
+    repositories {
+        google()
+        mavenCentral()
+    }
 
     sourceSets {
         commonMain.dependencies {
@@ -20,13 +25,16 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
+            //Ktor
+            implementation(libs.ktor.client.core)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
-        jvmMain.dependencies {
+
+        val desktopMain by getting
+        desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
-            implementation(libs.kotlinx.coroutinesSwing)
         }
     }
 }
