@@ -7,7 +7,7 @@ fun App() {
     EmailTheme(useDarkTheme = true) {
         LoginScreen { username, password ->
             println("Username $username, password $password")
-            // call your auth logic here
+            // call auth logic here
         }
     }
 }

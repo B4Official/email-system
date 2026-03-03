@@ -19,6 +19,15 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 
+data class LoginUiState(
+    val username: String,
+    val password: String,
+    val usernameError: Boolean,
+    val passwordError: Boolean,
+    val canSubmit: Boolean,
+)
+
+
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
@@ -28,14 +37,40 @@ fun LoginScreen(
     var password by remember { mutableStateOf("") }
     var attempted by remember { mutableStateOf(false) }
 
+    val usernameError = attempted && username.isBlank()
+    val passwordError = attempted && password.isBlank()
+    val canSubmit = username.isNotBlank() && password.isNotBlank()
+
+    val state =
+        LoginUiState(
+            username,
+            password,
+            usernameError,
+            passwordError,
+            canSubmit,
+        )
+
+    LoginContent(
+        modifier,
+        state,
+        onUsernameChange = { newUsername -> username = newUsername },
+        onPasswordChange = { newPassword -> password = newPassword },
+        onSubmit = { onLogin(state.username, state.password) },
+    )
+}
+
+@Composable
+private fun LoginContent(
+    modifier: Modifier = Modifier,
+    state: LoginUiState,
+    onUsernameChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onSubmit: () -> Unit,
+) {
     val c = EmailTheme.colors
     val t = EmailTheme.typography
     val s = EmailTheme.shapes
     val sp = EmailTheme.spacing
-
-    val usernameError = attempted && username.isBlank()
-    val passwordError = attempted && password.isBlank()
-    val canSubmit = username.isNotBlank() && password.isNotBlank()
 
     Box(
         modifier = modifier
@@ -44,56 +79,96 @@ fun LoginScreen(
             .padding(sp.lg),
         contentAlignment = Alignment.Center
     ) {
-        Column(
-            modifier = Modifier
-                .widthIn(max = 420.dp)
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(s.cardRadius))
-                .background(c.surface)
-                .border(1.dp, c.border, RoundedCornerShape(s.cardRadius))
-                .padding(sp.lg),
-            verticalArrangement = Arrangement.spacedBy(sp.md)
-        ) {
-            BasicText(
-                text = "Sign in",
-                style = t.title.copy(color = c.text),
-            )
-
-            BasicText(
-                text = "Use your username and password.",
-                style = t.body.copy(color = c.text),
-            )
-
-            LabeledField(
-                label = "Username",
-                value = username,
-                onValueChange = { username = it },
-                isError = usernameError,
-                errorText = "Username is required",
-                keyboardType = KeyboardType.Text,
-            )
-
-            LabeledField(
-                label = "Password",
-                value = password,
-                onValueChange = { password = it },
-                isError = passwordError,
-                errorText = "Password is required",
-                keyboardType = KeyboardType.Password,
-                visualTransformation = PasswordVisualTransformation()
-            )
-
-            PrimaryButton(
-                text = "Sign in",
-                enabled = canSubmit,
-                onClick = {
-                    attempted = true
-                    if (!canSubmit) return@PrimaryButton
-                    onLogin(username.trim(), password)
-                }
-            )
-        }
+        LoginCard(
+            modifier,
+            state,
+            onUsernameChange,
+            onPasswordChange,
+            onSubmit
+        )
     }
+}
+
+@Composable
+private fun LoginCard(
+    modifier: Modifier = Modifier,
+    state: LoginUiState,
+    onUsernameChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onSubmit: () -> Unit
+) {
+    val c = EmailTheme.colors
+    val t = EmailTheme.typography
+    val s = EmailTheme.shapes
+    val sp = EmailTheme.spacing
+
+    Column(
+        modifier
+            .widthIn(max = 420.dp)
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(s.cardRadius))
+            .background(c.surface)
+            .border(1.dp, c.border, RoundedCornerShape(s.cardRadius))
+            .padding(sp.lg),
+        verticalArrangement = Arrangement.spacedBy(sp.md)
+    ) {
+        LoginHeader(modifier = Modifier)
+        UsernameField(state.username, onUsernameChange, state.usernameError)
+        PasswordField(state.password, onPasswordChange, state.passwordError)
+        LoginButton(state.canSubmit, onSubmit)
+    }
+}
+
+@Composable
+fun LoginHeader(modifier: Modifier = Modifier) {
+    val c = EmailTheme.colors
+    val t = EmailTheme.typography
+
+    BasicText(
+        text = "Sign in",
+        style = t.title.copy(color = c.text),
+    )
+
+    BasicText(
+        text = "Use your username and password.",
+        style = t.body.copy(color = c.text),
+    )
+}
+
+@Composable
+fun UsernameField(username: String, onValueChange: (String) -> Unit, usernameError: Boolean) {
+    LabeledField(
+        label = "Username",
+        value = username,
+        onValueChange,
+        isError = usernameError,
+        errorText = "Username is required",
+        keyboardType = KeyboardType.Text,
+    )
+
+}
+
+@Composable
+fun PasswordField(password: String, onValueChange: (String) -> Unit, passwordError: Boolean) {
+    LabeledField(
+        label = "Password",
+        value = password,
+        onValueChange,
+        isError = passwordError,
+        errorText = "Password is required",
+        keyboardType = KeyboardType.Password,
+        visualTransformation = PasswordVisualTransformation()
+    )
+
+}
+
+@Composable
+fun LoginButton(canSubmit: Boolean, onClick: () -> Unit) {
+    PrimaryButton(
+        text = "Sign in",
+        enabled = canSubmit,
+        onClick
+    )
 }
 
 @Composable
@@ -186,34 +261,4 @@ private fun PrimaryButton(
     }
 }
 
-@Composable
-fun LoginCard(modifier: Modifier = Modifier) {
-    // TODO: Card container, elevation, shape.
-    // TODO: Column layout for header, fields, button, footer.
-}
 
-@Composable
-fun LoginHeader(modifier: Modifier = Modifier) {
-    // TODO: App name/logo.
-    // TODO: Title and subtitle.
-}
-
-@Composable
-fun UsernameField(modifier: Modifier = Modifier) {
-    // TODO: Static username input UI (no state, no validation).
-}
-
-@Composable
-fun PasswordField(modifier: Modifier = Modifier) {
-    // TODO: Static password input UI (no state, no validation).
-}
-
-@Composable
-fun LoginButton(modifier: Modifier = Modifier) {
-    // TODO: Button UI only, no onClick.
-}
-
-@Composable
-fun LoginFooter(modifier: Modifier = Modifier) {
-    // TODO: Optional: “Forgot password?” / “Create account” text.
-}
