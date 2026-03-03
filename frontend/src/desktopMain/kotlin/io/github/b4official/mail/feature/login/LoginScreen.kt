@@ -1,4 +1,4 @@
-package io.github.b4official.mail
+package io.github.b4official.mail.feature.login
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -18,6 +18,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import io.github.b4official.mail.ui.theme.EmailTheme
 
 data class LoginUiState(
     val username: String,
@@ -41,21 +42,20 @@ fun LoginScreen(
     val passwordError = attempted && password.isBlank()
     val canSubmit = username.isNotBlank() && password.isNotBlank()
 
-    val state =
-        LoginUiState(
-            username,
-            password,
-            usernameError,
-            passwordError,
-            canSubmit,
-        )
+    val state = LoginUiState(
+        username,
+        password,
+        usernameError,
+        passwordError,
+        canSubmit,
+    )
 
     LoginContent(
         modifier,
         state,
         onUsernameChange = { newUsername -> username = newUsername },
         onPasswordChange = { newPassword -> password = newPassword },
-        onSubmit = { onLogin(state.username, state.password) },
+        onSubmit = { onLogin(username, password) },
     )
 }
 
@@ -68,19 +68,17 @@ private fun LoginContent(
     onSubmit: () -> Unit,
 ) {
     val c = EmailTheme.colors
-    val t = EmailTheme.typography
-    val s = EmailTheme.shapes
     val sp = EmailTheme.spacing
 
     Box(
-        modifier = modifier
+        modifier
             .fillMaxSize()
             .background(c.background)
             .padding(sp.lg),
         contentAlignment = Alignment.Center
     ) {
         LoginCard(
-            modifier,
+            modifier = Modifier,
             state,
             onUsernameChange,
             onPasswordChange,
@@ -98,7 +96,6 @@ private fun LoginCard(
     onSubmit: () -> Unit
 ) {
     val c = EmailTheme.colors
-    val t = EmailTheme.typography
     val s = EmailTheme.shapes
     val sp = EmailTheme.spacing
 
@@ -112,7 +109,7 @@ private fun LoginCard(
             .padding(sp.lg),
         verticalArrangement = Arrangement.spacedBy(sp.md)
     ) {
-        LoginHeader(modifier = Modifier)
+        LoginHeader()
         UsernameField(state.username, onUsernameChange, state.usernameError)
         PasswordField(state.password, onPasswordChange, state.passwordError)
         LoginButton(state.canSubmit, onSubmit)
@@ -120,7 +117,7 @@ private fun LoginCard(
 }
 
 @Composable
-fun LoginHeader(modifier: Modifier = Modifier) {
+private fun LoginHeader() {
     val c = EmailTheme.colors
     val t = EmailTheme.typography
 
@@ -136,7 +133,7 @@ fun LoginHeader(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun UsernameField(username: String, onValueChange: (String) -> Unit, usernameError: Boolean) {
+private fun UsernameField(username: String, onValueChange: (String) -> Unit, usernameError: Boolean) {
     LabeledField(
         label = "Username",
         value = username,
@@ -149,7 +146,7 @@ fun UsernameField(username: String, onValueChange: (String) -> Unit, usernameErr
 }
 
 @Composable
-fun PasswordField(password: String, onValueChange: (String) -> Unit, passwordError: Boolean) {
+private fun PasswordField(password: String, onValueChange: (String) -> Unit, passwordError: Boolean) {
     LabeledField(
         label = "Password",
         value = password,
@@ -163,12 +160,31 @@ fun PasswordField(password: String, onValueChange: (String) -> Unit, passwordErr
 }
 
 @Composable
-fun LoginButton(canSubmit: Boolean, onClick: () -> Unit) {
-    PrimaryButton(
-        text = "Sign in",
-        enabled = canSubmit,
-        onClick
-    )
+private fun LoginButton(canSubmit: Boolean, onClick: () -> Unit) {
+    val c = EmailTheme.colors
+    val t = EmailTheme.typography
+    val s = EmailTheme.shapes
+    val sp = EmailTheme.spacing
+
+    val shape = RoundedCornerShape(s.buttonRadius)
+
+    val text = "Log In"
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(44.dp)
+            .clip(shape)
+            .background(if (canSubmit) c.primary else c.border)
+            .clickable(enabled = canSubmit, onClick = onClick)
+            .padding(horizontal = sp.md),
+        contentAlignment = Alignment.Center
+    ) {
+        BasicText(
+            text = text,
+            style = t.body.copy(color = if (canSubmit) c.primaryText else c.textMuted),
+        )
+    }
 }
 
 @Composable
@@ -230,35 +246,3 @@ private fun LabeledField(
         }
     }
 }
-
-@Composable
-private fun PrimaryButton(
-    text: String,
-    enabled: Boolean,
-    onClick: () -> Unit
-) {
-    val c = EmailTheme.colors
-    val t = EmailTheme.typography
-    val s = EmailTheme.shapes
-    val sp = EmailTheme.spacing
-
-    val shape = RoundedCornerShape(s.buttonRadius)
-
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(44.dp)
-            .clip(shape)
-            .background(if (enabled) c.primary else c.border)
-            .clickable(enabled = enabled, onClick = onClick)
-            .padding(horizontal = sp.md),
-        contentAlignment = Alignment.Center
-    ) {
-        BasicText(
-            text = text,
-            style = t.body.copy(color = if (enabled) c.primaryText else c.textMuted),
-        )
-    }
-}
-
-

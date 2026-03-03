@@ -1,9 +1,11 @@
-package io.github.b4official.mail
+package io.github.b4official.mail.ui.theme
 
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -28,9 +30,9 @@ data class EmailTypography(
 
 @Immutable
 data class EmailShapes(
-    val cardRadius: androidx.compose.foundation.shape.CornerSize,
-    val fieldRadius: androidx.compose.foundation.shape.CornerSize,
-    val buttonRadius: androidx.compose.foundation.shape.CornerSize,
+    val cardRadius: CornerSize,
+    val fieldRadius: CornerSize,
+    val buttonRadius: CornerSize,
 )
 
 @Stable
@@ -43,10 +45,10 @@ class EmailThemeTokens(
 
 @Immutable
 data class EmailSpacing(
-    val xs: androidx.compose.ui.unit.Dp = 6.dp,
-    val sm: androidx.compose.ui.unit.Dp = 10.dp,
-    val md: androidx.compose.ui.unit.Dp = 16.dp,
-    val lg: androidx.compose.ui.unit.Dp = 24.dp,
+    val xs: Dp = 6.dp,
+    val sm: Dp = 10.dp,
+    val md: Dp = 16.dp,
+    val lg: Dp = 24.dp,
 )
 
 private val LocalEmailTheme = staticCompositionLocalOf<EmailThemeTokens> {
@@ -89,9 +91,9 @@ private val Typo = EmailTypography(
 )
 
 private val Shapes = EmailShapes(
-    cardRadius = androidx.compose.foundation.shape.CornerSize(16.dp),
-    fieldRadius = androidx.compose.foundation.shape.CornerSize(12.dp),
-    buttonRadius = androidx.compose.foundation.shape.CornerSize(12.dp),
+    cardRadius = CornerSize(16.dp),
+    fieldRadius = CornerSize(12.dp),
+    buttonRadius = CornerSize(12.dp),
 )
 
 @Composable
