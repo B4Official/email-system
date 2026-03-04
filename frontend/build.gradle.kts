@@ -5,6 +5,12 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
+    id("com.github.gmazzo.buildconfig") version "5.5.0"
+}
+
+buildConfig {
+    packageName("io.github.b4official.mail")
+    buildConfigField("String", "BACKEND_BASE_URL", "\"http://localhost:8080\"")
 }
 
 kotlin {
@@ -25,6 +31,7 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             //Ktor
             implementation(libs.ktor.client.core)
+            implementation(libs.kotlin.logging)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -33,6 +40,8 @@ kotlin {
         val desktopMain by getting
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
+            implementation(libs.ktor.client.cio)
+            implementation(libs.slf4j.simple)
         }
     }
 }

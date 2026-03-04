@@ -1,15 +1,42 @@
 package io.github.b4official.mail
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import io.github.b4official.mail.auth.data.AuthApiClient
+import io.github.b4official.mail.config.loadAppConfig
 import io.github.b4official.mail.feature.login.LoginScreen
+import io.github.b4official.mail.network.createSharedHttpClient
 import io.github.b4official.mail.ui.theme.EmailTheme
+import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlinx.coroutines.launch
+
+private val logger = KotlinLogging.logger {}
 
 @Composable
 fun App() {
+    val config = remember { loadAppConfig() }
+    val httpClient = remember { createSharedHttpClient() }
+    val authApi = remember { AuthApiClient(httpClient, config.backendBaseUrl) }
+    val scope = rememberCoroutineScope()
+
+    DisposableEffect(httpClient) {
+        onDispose {
+            httpClient.close()
+        }
+    }
+
     EmailTheme(useDarkTheme = true) {
         LoginScreen { username, password ->
-            println("Username $username, password $password")
-            // call auth logic here
+            scope.launch {
+                val didLogin = authApi.login(username, password)
+                val outcome = if (didLogin) "succesfully" else "fail to"
+                val message = "username$username wth password $password $outcome log in"
+
+                logger.info { message }
+                println(message)
+            }
         }
     }
 }
