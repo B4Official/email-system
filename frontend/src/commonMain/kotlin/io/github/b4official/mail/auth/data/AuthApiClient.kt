@@ -6,8 +6,11 @@ import io.github.b4official.mail.auth.data.model.mapLoginFailureFromResponseStat
 import io.github.b4official.mail.auth.data.model.mapLoginFailureFromThrowable
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.client.HttpClient
+import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.isSuccess
 import kotlinx.coroutines.CancellationException
@@ -30,7 +33,8 @@ class AuthApiClient(
     suspend fun login(request: LoginRequest): LoginResult {
         return try {
             val response = client.post("$backendBaseUrl/api/auth/login") {
-                setBody(request.toRequestBody())
+                header(HttpHeaders.ContentType, ContentType.Application.Json)
+                setBody(request)
             }
 
             if (response.status.isSuccess()) {

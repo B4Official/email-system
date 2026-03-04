@@ -33,7 +33,7 @@ fun App() {
             scope.launch {
                 val loginResult = authApi.login(username, password)
                 val outcome = if (loginResult is LoginResult.Success) "succesfully" else "fail to"
-                val message = "username$username wth password $password $outcome log in"
+                val message = "username$username $outcome log in"
 
                 if (loginResult is LoginResult.Failure) {
                     logger.warn { "Login failed with reason '${loginResult.failure.reason}'" }
