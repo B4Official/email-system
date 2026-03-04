@@ -5,6 +5,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import io.github.b4official.mail.auth.data.AuthApiClient
+import io.github.b4official.mail.auth.data.model.LoginResult
 import io.github.b4official.mail.config.loadAppConfig
 import io.github.b4official.mail.feature.login.LoginScreen
 import io.github.b4official.mail.network.createSharedHttpClient
@@ -30,10 +31,13 @@ fun App() {
     EmailTheme(useDarkTheme = true) {
         LoginScreen { username, password ->
             scope.launch {
-                val didLogin = authApi.login(username, password)
-                val outcome = if (didLogin) "succesfully" else "fail to"
+                val loginResult = authApi.login(username, password)
+                val outcome = if (loginResult is LoginResult.Success) "succesfully" else "fail to"
                 val message = "username$username wth password $password $outcome log in"
 
+                if (loginResult is LoginResult.Failure) {
+                    logger.warn { "Login failed with reason '${loginResult.failure.reason}'" }
+                }
                 logger.info { message }
                 println(message)
             }

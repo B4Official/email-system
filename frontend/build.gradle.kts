@@ -1,5 +1,8 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
+val appClientName = "email-system-desktop"
+val appVersionName = "1.0.0"
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.composeMultiplatform)
@@ -11,6 +14,8 @@ plugins {
 buildConfig {
     packageName("io.github.b4official.mail")
     buildConfigField("String", "BACKEND_BASE_URL", "\"http://localhost:8080\"")
+    buildConfigField("String", "APP_CLIENT_NAME", "\"$appClientName\"")
+    buildConfigField("String", "APP_VERSION_NAME", "\"$appVersionName\"")
 }
 
 kotlin {
@@ -34,6 +39,8 @@ kotlin {
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+            implementation(libs.ktor.client.mock)
+            implementation(libs.kotlinx.coroutines.test)
         }
 
         val desktopMain by getting
@@ -45,6 +52,13 @@ kotlin {
             implementation(libs.ktor.client.logging)
             implementation(libs.slf4j.simple)
         }
+
+        val desktopTest by getting
+        desktopTest.dependencies {
+            implementation(libs.kotlin.test)
+            implementation(libs.ktor.client.mock)
+            implementation(libs.kotlinx.coroutines.test)
+        }
     }
 }
 
@@ -55,7 +69,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "io.github.b4official.mail"
-            packageVersion = "1.0.0"
+            packageVersion = appVersionName
         }
     }
 }
