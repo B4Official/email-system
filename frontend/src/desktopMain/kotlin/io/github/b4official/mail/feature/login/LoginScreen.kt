@@ -21,9 +21,9 @@ import androidx.compose.ui.unit.dp
 import io.github.b4official.mail.ui.theme.EmailTheme
 
 data class LoginUiState(
-    val username: String,
+    val identifier: String,
     val password: String,
-    val usernameError: Boolean,
+    val identifierError: Boolean,
     val passwordError: Boolean,
     val canSubmit: Boolean,
 )
@@ -32,20 +32,20 @@ data class LoginUiState(
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
-    onLogin: (username: String, password: String) -> Unit
+    onLogin: (identifier: String, password: String) -> Unit
 ) {
-    var username by remember { mutableStateOf("") }
+    var identifier by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var attempted by remember { mutableStateOf(false) }
 
-    val usernameError = attempted && username.isBlank()
+    val identifierError = attempted && identifier.isBlank()
     val passwordError = attempted && password.isBlank()
-    val canSubmit = username.isNotBlank() && password.isNotBlank()
+    val canSubmit = identifier.isNotBlank() && password.isNotBlank()
 
     val state = LoginUiState(
-        username,
+        identifier,
         password,
-        usernameError,
+        identifierError,
         passwordError,
         canSubmit,
     )
@@ -53,9 +53,9 @@ fun LoginScreen(
     LoginContent(
         modifier,
         state,
-        onUsernameChange = { newUsername -> username = newUsername },
+        onIdentifierChange = { newIdentifier -> identifier = newIdentifier },
         onPasswordChange = { newPassword -> password = newPassword },
-        onSubmit = { onLogin(username, password) },
+        onSubmit = { onLogin(identifier, password) },
     )
 }
 
@@ -63,7 +63,7 @@ fun LoginScreen(
 private fun LoginContent(
     modifier: Modifier = Modifier,
     state: LoginUiState,
-    onUsernameChange: (String) -> Unit,
+    onIdentifierChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     onSubmit: () -> Unit,
 ) {
@@ -80,7 +80,7 @@ private fun LoginContent(
         LoginCard(
             modifier = Modifier,
             state,
-            onUsernameChange,
+            onIdentifierChange,
             onPasswordChange,
             onSubmit
         )
@@ -91,7 +91,7 @@ private fun LoginContent(
 private fun LoginCard(
     modifier: Modifier = Modifier,
     state: LoginUiState,
-    onUsernameChange: (String) -> Unit,
+    onIdentifierChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     onSubmit: () -> Unit
 ) {
@@ -110,7 +110,7 @@ private fun LoginCard(
         verticalArrangement = Arrangement.spacedBy(sp.md)
     ) {
         LoginHeader()
-        UsernameField(state.username, onUsernameChange, state.usernameError)
+        IdentifierField(state.identifier, onIdentifierChange, state.identifierError)
         PasswordField(state.password, onPasswordChange, state.passwordError)
         LoginButton(state.canSubmit, onSubmit)
     }
@@ -127,19 +127,19 @@ private fun LoginHeader() {
     )
 
     BasicText(
-        text = "Use your username and password.",
+        text = "Use your username or email, plus password.",
         style = t.body.copy(color = c.text),
     )
 }
 
 @Composable
-private fun UsernameField(username: String, onValueChange: (String) -> Unit, usernameError: Boolean) {
+private fun IdentifierField(identifier: String, onValueChange: (String) -> Unit, identifierError: Boolean) {
     LabeledField(
-        label = "Username",
-        value = username,
+        label = "Username or Email",
+        value = identifier,
         onValueChange,
-        isError = usernameError,
-        errorText = "Username is required",
+        isError = identifierError,
+        errorText = "Username or email is required",
         keyboardType = KeyboardType.Text,
     )
 
