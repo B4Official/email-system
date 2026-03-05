@@ -1,7 +1,9 @@
 package io.github.b4official.mail.auth.data
 
-import io.github.b4official.mail.auth.data.model.LoginFailureReason
-import io.github.b4official.mail.auth.data.model.LoginResult
+import arrow.core.Either
+import io.github.b4official.mail.auth.client.AuthApiClient
+import io.github.b4official.mail.auth.error.AuthError
+import io.github.b4official.mail.auth.model.LoginResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
@@ -23,11 +25,10 @@ class AuthApiClientTest {
         val httpClient = createMockClient(status = HttpStatusCode.OK)
         val subject = AuthApiClient(httpClient, TEST_BASE_URL)
 
-        try {
+        httpClient.use { httpClient ->
             val result = subject.login("alice", "top-secret")
-            assertIs<LoginResult.Success>(result)
-        } finally {
-            httpClient.close()
+            val success = result.expectRight()
+            assertEquals(LoginResponse(), success)
         }
     }
 
@@ -36,13 +37,11 @@ class AuthApiClientTest {
         val httpClient = createMockClient(status = HttpStatusCode.Unauthorized)
         val subject = AuthApiClient(httpClient, TEST_BASE_URL)
 
-        try {
+        httpClient.use { httpClient ->
             val result = subject.login("alice", "wrong-pass")
-            val failure = assertIs<LoginResult.Failure>(result).failure
-            assertEquals(LoginFailureReason.INVALID_CREDENTIALS, failure.reason)
-            assertEquals(401, failure.statusCode)
-        } finally {
-            httpClient.close()
+            val failure = result.expectLeft()
+            val invalidCredentials = assertIs<AuthError.LoginError.InvalidCredentials>(failure)
+            assertEquals(401, invalidCredentials.statusCode)
         }
     }
 
@@ -51,13 +50,11 @@ class AuthApiClientTest {
         val httpClient = createMockClient(status = HttpStatusCode.TooManyRequests)
         val subject = AuthApiClient(httpClient, TEST_BASE_URL)
 
-        try {
+        httpClient.use { httpClient ->
             val result = subject.login("alice", "top-secret")
-            val failure = assertIs<LoginResult.Failure>(result).failure
-            assertEquals(LoginFailureReason.RATE_LIMITED, failure.reason)
-            assertEquals(429, failure.statusCode)
-        } finally {
-            httpClient.close()
+            val failure = result.expectLeft()
+            val rateLimited = assertIs<AuthError.LoginError.RateLimited>(failure)
+            assertEquals(429, rateLimited.statusCode)
         }
     }
 
@@ -66,13 +63,11 @@ class AuthApiClientTest {
         val httpClient = createMockClient(status = HttpStatusCode.InternalServerError)
         val subject = AuthApiClient(httpClient, TEST_BASE_URL)
 
-        try {
+        httpClient.use { httpClient ->
             val result = subject.login("alice", "top-secret")
-            val failure = assertIs<LoginResult.Failure>(result).failure
-            assertEquals(LoginFailureReason.SERVER_ERROR, failure.reason)
-            assertEquals(500, failure.statusCode)
-        } finally {
-            httpClient.close()
+            val failure = result.expectLeft()
+            val serverError = assertIs<AuthError.LoginError.ServerError>(failure)
+            assertEquals(500, serverError.statusCode)
         }
     }
 
@@ -81,12 +76,10 @@ class AuthApiClientTest {
         val httpClient = createMockClient(throwable = IllegalStateException("Request timeout while connecting"))
         val subject = AuthApiClient(httpClient, TEST_BASE_URL)
 
-        try {
+        httpClient.use { httpClient ->
             val result = subject.login("alice", "top-secret")
-            val failure = assertIs<LoginResult.Failure>(result).failure
-            assertEquals(LoginFailureReason.TIMEOUT, failure.reason)
-        } finally {
-            httpClient.close()
+            val failure = result.expectLeft()
+            assertIs<AuthError.LoginError.Timeout>(failure)
         }
     }
 
@@ -95,12 +88,10 @@ class AuthApiClientTest {
         val httpClient = createMockClient(throwable = IllegalStateException("Connection reset by peer"))
         val subject = AuthApiClient(httpClient, TEST_BASE_URL)
 
-        try {
+        httpClient.use { httpClient ->
             val result = subject.login("alice", "top-secret")
-            val failure = assertIs<LoginResult.Failure>(result).failure
-            assertEquals(LoginFailureReason.NETWORK_ERROR, failure.reason)
-        } finally {
-            httpClient.close()
+            val failure = result.expectLeft()
+            assertIs<AuthError.LoginError.Network>(failure)
         }
     }
 
@@ -135,5 +126,19 @@ class AuthApiClientTest {
 
     companion object {
         private const val TEST_BASE_URL = "http://localhost:8080"
+    }
+}
+
+private fun <L, R> Either<L, R>.expectRight(): R {
+    return when (this) {
+        is Either.Right -> value
+        is Either.Left -> error("Expected Either.Right but got Either.Left($value)")
+    }
+}
+
+private fun <L, R> Either<L, R>.expectLeft(): L {
+    return when (this) {
+        is Either.Left -> value
+        is Either.Right -> error("Expected Either.Left but got Either.Right($value)")
     }
 }

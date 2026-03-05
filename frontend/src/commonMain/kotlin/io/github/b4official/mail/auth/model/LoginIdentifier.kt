@@ -1,4 +1,4 @@
-package io.github.b4official.mail.auth.data.model
+package io.github.b4official.mail.auth.model
 
 import arrow.core.Either
 import arrow.core.left

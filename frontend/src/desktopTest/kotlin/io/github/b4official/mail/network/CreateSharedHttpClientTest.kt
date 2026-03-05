@@ -61,12 +61,10 @@ class CreateSharedHttpClientTest {
             }
         }
 
-        try {
+        client.use { client ->
             client.get("https://example.com/ping")
             assertEquals(ContentType.Application.Json.toString(), capturedAccept)
             assertEquals("email-system-desktop/1.0.0-test (desktop)", capturedUserAgent)
-        } finally {
-            client.close()
         }
     }
 }
