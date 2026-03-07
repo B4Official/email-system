@@ -1,5 +1,13 @@
 package io.github.b4official.mail.domain;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+
+
+@Getter
+@Setter
+@NoArgsConstructor
 public class User {
 
     String userName;
@@ -12,11 +20,4 @@ public class User {
         this.surname = surname;
     }
 
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
 }
