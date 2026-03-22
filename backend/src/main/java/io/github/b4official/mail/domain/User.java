@@ -1,23 +1,25 @@
 package io.github.b4official.mail.domain;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
 
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "users")
 public class User {
 
-    String userName;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    String username;
     String name;
     String surname;
+    private String email;
 
-    public User(String userName, String name, String surname){
-        this.userName = userName;
-        this.name = name;
-        this.surname = surname;
-    }
+    private String password;
+
 
 }

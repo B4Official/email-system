@@ -1,10 +1,15 @@
 package io.github.b4official.mail.repository;
 
 import io.github.b4official.mail.domain.User;
-import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserRepository {
+import java.util.Optional;
 
-    void addUser();
-    List<User> getUsers();
+public interface UserRepository extends JpaRepository<User, Long> {
+
+    Optional<User> findByUsername(String username);
+
+    boolean existsByEmail(String email);
+
+    boolean existsByUsername(String username);
 }
