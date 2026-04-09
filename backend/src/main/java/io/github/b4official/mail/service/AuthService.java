@@ -1,6 +1,7 @@
 package io.github.b4official.mail.service;
 
 
+import io.github.b4official.mail.configuration.SecurityConfig;
 import io.github.b4official.mail.domain.User;
 import io.github.b4official.mail.dto.request.LoginRequest;
 import io.github.b4official.mail.dto.response.LoginResponse;
@@ -18,12 +19,14 @@ public class AuthService {
 
     private final InMemoryUserRepository userRepository;
 
+    private final SecurityConfig securityConfig;
+
     public LoginResponse login(LoginRequest request) {
 
         User user = userRepository.findByUsername(request.getUsername()).
                 orElseThrow(() -> new RuntimeException("User not found"));
 
-        if(!user.getPassword().equals(request.getPassword()))
+        if(!user.getPassword().matches(request.getPassword()))
             throw new RuntimeException("Incorrrect password");
 
 
