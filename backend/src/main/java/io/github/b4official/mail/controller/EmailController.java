@@ -36,4 +36,12 @@ public class EmailController {
 
         return  ResponseEntity.ok(response);
     }
+
+    @GetMapping("/sent")
+    ResponseEntity<ListEmailsResponse> sent(){
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        ListEmailsResponse response = emailService.getSent(username);
+
+        return  ResponseEntity.ok(response);
+    }
 }

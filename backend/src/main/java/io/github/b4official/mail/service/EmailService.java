@@ -66,4 +66,22 @@ public class EmailService {
                         ).build();
     }
 
+    public ListEmailsResponse getSent(String username){
+
+        User user = userRepository.findByUsername(username).orElseThrow();
+
+        return ListEmailsResponse.builder()
+                .receivedEmails(
+                        emailRepository.getAllSent(user)
+                                .stream()
+                                .map(email -> EmailResponse.builder()
+                                        .id(email.getId())
+                                        .subject(email.getSubject())
+                                        .body(email.getBody())
+                                        .sender(email.getSender().getUsername())
+                                        .receivingTime(email.getSentTime())
+                                        .build())
+                                .toList()
+                ).build();
+    }
 }

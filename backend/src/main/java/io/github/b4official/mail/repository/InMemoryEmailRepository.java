@@ -43,11 +43,10 @@ public class InMemoryEmailRepository {
     private final List<Email> emails = new ArrayList<>();
 
     public List<Email> getAllReceived(User user){
-
-        return emails.stream().filter(email -> email.getReceiver().equals(user)).toList();
+        return emails.stream().filter(email -> email.getReceiver().getEmail().equals(user.getEmail())).toList();
     }
 
     public List<Email> getAllSent(User sender){
-        return emails.stream().filter(email -> email.getSender().equals(sender)).toList();
+        return emails.stream().filter(email -> email.getSender().getEmail().equals(sender.getEmail())).toList();
     }
 }
