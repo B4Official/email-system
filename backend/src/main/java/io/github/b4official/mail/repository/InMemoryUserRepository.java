@@ -25,4 +25,11 @@ public class InMemoryUserRepository {
                 .filter(u -> u.getUsername().equals(username))
                 .findFirst();
     }
+
+    public Optional<User> findByEmail(String email) {
+        return users.stream()
+                .filter(u -> u.getEmail().equals(email))
+                .findFirst();
+    }
+
 }
