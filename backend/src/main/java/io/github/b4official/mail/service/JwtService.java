@@ -42,7 +42,6 @@ public class JwtService {
     }
 
     public Boolean tokenIsValid(String jwt){
-
         try {
             Date expTime = Jwts.parser()
                     .verifyWith(getSigningKey())
@@ -50,8 +49,11 @@ public class JwtService {
                     .parseSignedClaims(jwt)
                     .getPayload()
                     .getExpiration();
-            return expTime.after(new Date());
+            boolean valid = expTime.after(new Date());
+            System.out.println("Token valid: " + valid);
+            return valid;
         } catch (Exception e){
+            System.out.println("Token invalid: " + e.getMessage());
             return false;
         }
     }
