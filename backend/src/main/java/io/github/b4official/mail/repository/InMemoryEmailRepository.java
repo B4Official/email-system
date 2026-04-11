@@ -26,8 +26,8 @@ public class InMemoryEmailRepository {
     }
     @PostConstruct
     public void init() {
-        User ion = User.builder().id(1L).username("ion").email("ion@gmail.com").build();
-        User maria = User.builder().id(2L).username("maria").email("maria@gmail.com").build();
+        User ion = User.builder().id(1L).username("ion").email("ion@test.com").build();
+        User maria = User.builder().id(2L).username("maria").email("maria@test.com").build();
 
         save(Email.builder().sender(ion).receiver(maria).subject("Salut").body("Ce mai faci?").build());
         save(Email.builder().sender(maria).receiver(ion).subject("Re: Salut").body("Bine, tu?").build());

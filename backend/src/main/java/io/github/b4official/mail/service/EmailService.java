@@ -3,6 +3,8 @@ package io.github.b4official.mail.service;
 import io.github.b4official.mail.domain.Email;
 import io.github.b4official.mail.domain.User;
 import io.github.b4official.mail.dto.request.SendEmailRequest;
+import io.github.b4official.mail.dto.response.EmailResponse;
+import io.github.b4official.mail.dto.response.ListEmailsResponse;
 import io.github.b4official.mail.dto.response.SendEmailResponse;
 import io.github.b4official.mail.repository.EmailRepository;
 import io.github.b4official.mail.repository.InMemoryEmailRepository;
@@ -43,6 +45,25 @@ public class EmailService {
                 .sentTime(email.getSentTime())
                 .build();
 
+    }
+
+    public ListEmailsResponse getInbox(String username){
+
+        User user = userRepository.findByUsername(username).orElseThrow();
+
+        return ListEmailsResponse.builder()
+                        .receivedEmails(
+                            emailRepository.getAllReceived(user)
+                            .stream()
+                            .map(email -> EmailResponse.builder()
+                                    .id(email.getId())
+                                    .subject(email.getSubject())
+                                    .body(email.getBody())
+                                    .sender(email.getSender().getUsername())
+                                    .receivingTime(email.getSentTime())
+                                    .build())
+                            .toList()
+                        ).build();
     }
 
 }
