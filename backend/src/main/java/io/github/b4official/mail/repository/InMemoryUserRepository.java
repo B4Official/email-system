@@ -17,7 +17,11 @@ public class InMemoryUserRepository {
     private final List<User> users = new ArrayList<>();
 
     public InMemoryUserRepository() {
-        users.add(new User(1L, "emibz", "emi", "buzincu", "emi@test", encoder.encode("test") ));
+        users.add(new User(1L, "emibz", "emi", "buzincu", "emi@test.com", encoder.encode("test")));
+        users.add(new User(2L, "ion99", "ion", "popescu", "ion@test.com", encoder.encode("parola")));
+        users.add(new User(3L, "maria_m", "maria", "moldovan", "maria@test.com", encoder.encode("parola")));
+        users.add(new User(4L, "alex_d", "alex", "dumitru", "alex@test.com", encoder.encode("parola")));
+        users.add(new User(5L, "ana_b", "ana", "barbu", "ana@test.com", encoder.encode("parola")));
     }
 
     public Optional<User> findByUsername(String username) {

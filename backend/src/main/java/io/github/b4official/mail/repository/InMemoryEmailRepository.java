@@ -12,8 +12,17 @@ import java.util.List;
 @Component
 public class InMemoryEmailRepository {
 
-    public void save(Email email) {
-        emails.add(email);
+    public Email save(Email email) {
+        Email emailWithId = Email.builder()
+                .id((long) emails.size() + 1)
+                .sender(email.getSender())
+                .receiver(email.getReceiver())
+                .subject(email.getSubject())
+                .body(email.getBody())
+                .sentTime(email.getSentTime())
+                .build();
+        emails.add(emailWithId);
+        return emailWithId;
     }
     @PostConstruct
     public void init() {
